@@ -2,83 +2,107 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
 
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="description"
-        content="Nuance - AI-powered text analysis for media bias, rhetoric, and subtext.">
+    <title>
+        Nuance | AI Critical Reading Assistant
+    </title>
 
-    <meta name="theme-color" content="#090a0f">
+    <link rel="stylesheet" href="./style.cs">
 
-    <title>Nuance | AI Text Analysis</title>
-
-    <link rel="stylesheet" href="style.css">
-
-    <!-- Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
 </head>
+
 
 <body>
 
+
     <!-- Background Effects -->
+
     <div class="background-glow glow-1"></div>
     <div class="background-glow glow-2"></div>
 
+
+
     <main class="container">
 
-        <!-- ================= HEADER ================= -->
+
+        <!-- HEADER -->
 
         <header class="app-header">
+
 
             <div class="logo">
                 🧠
             </div>
 
+
             <span class="badge">
                 AI Powered Critical Reading
             </span>
 
-            <h1>Nuance</h1>
+
+            <h1>
+                Nuance
+            </h1>
+
 
             <p>
                 Deconstruct media bias, identify rhetorical techniques,
                 uncover hidden assumptions, and strengthen your critical thinking.
             </p>
 
+
         </header>
 
-        <!-- ================= INPUT ================= -->
+
+
+
+
+        <!-- INPUT SECTION -->
+
 
         <section class="input-card">
 
+
             <div class="section-title">
 
-                <h2>Input Text</h2>
+                <h2>
+                    Input Text
+                </h2>
+
 
                 <span id="wordCounter">
                     0 Words
                 </span>
 
+
             </div>
+
+
+
 
             <div class="textarea-wrapper">
 
+
                 <textarea
+
                     id="userInput"
+
                     placeholder="Paste an article, speech, editorial, research paper, or transcript here..."
-                    spellcheck="true"
-                    autocomplete="off"></textarea>
+
+                ></textarea>
+
 
             </div>
 
+
+
+
+
             <div class="button-row">
+
 
                 <button
                     id="clearBtn"
@@ -88,6 +112,8 @@
 
                 </button>
 
+
+
                 <button
                     id="exampleBtn"
                     class="secondary-btn">
@@ -95,6 +121,8 @@
                     Example
 
                 </button>
+
+
 
                 <button
                     id="analyzeBtn"
@@ -104,139 +132,201 @@
 
                 </button>
 
+
+
             </div>
+
 
         </section>
 
-        <!-- ================= ANALYSIS ================= -->
+
+
+
+
+
+        <!-- OUTPUT SECTION -->
+
 
         <section class="analysis-card">
 
+
             <div class="section-title">
 
-                <h2>Analysis Results</h2>
+
+                <h2>
+                    Analysis Results
+                </h2>
+
+
 
                 <div class="output-buttons">
 
-                    <button id="copyBtn" class="icon-btn">
+
+                    <button
+                        id="copyBtn"
+                        class="icon-btn">
+
                         📋 Copy
+
                     </button>
 
-                    <button id="downloadBtn" class="icon-btn">
-                        ⬇ Export
+
+
+                    <button
+                        id="exportBtn"
+                        class="icon-btn">
+
+                        ↓ Export
+
                     </button>
+
 
                 </div>
 
-            </div>
-
-            <!-- Loading -->
-
-            <div
-                id="loadingState"
-                class="loading hidden">
-
-                <div class="spinner"></div>
-
-                <p>
-                    AI is reading between the lines...
-                </p>
 
             </div>
 
-            <!-- Empty State -->
 
-            <div
-                id="emptyState"
-                class="empty-state">
+
+
+
+
+            <div id="aiOutput" class="output empty-state">
+
 
                 <div class="empty-icon">
                     ✨
                 </div>
 
+
+
                 <h3>
                     Ready to Analyze
                 </h3>
 
+
+
                 <p>
-                    Paste any article or speech above and let Nuance uncover
-                    hidden rhetoric, persuasive techniques, emotional framing,
-                    and potential bias.
+
+                    Paste any article or speech above and let Nuance
+                    uncover hidden rhetoric, persuasive techniques,
+                    emotional framing, and potential bias.
+
                 </p>
 
-            </div>
-
-            <!-- AI Output -->
-
-            <div
-                id="aiOutput"
-                class="output hidden">
 
             </div>
+
+
 
         </section>
 
-        <!-- ================= FEATURES ================= -->
+
+
+
+
+
+
+        <!-- FEATURES -->
+
 
         <section class="features-grid">
 
-            <div class="feature-card">
-
-                <h3>📰 Media Bias</h3>
-
-                <p>
-                    Detect subtle framing and slanted language.
-                </p>
-
-            </div>
 
             <div class="feature-card">
 
-                <h3>🎭 Rhetoric</h3>
+
+                <h3>
+                    📰 Media Bias
+                </h3>
+
 
                 <p>
-                    Identify emotional and logical persuasion techniques.
+                    Detect subtle framing, assumptions,
+                    and slanted language.
                 </p>
 
+
             </div>
+
+
+
+
 
             <div class="feature-card">
 
-                <h3>🧠 Critical Thinking</h3>
+
+                <h3>
+                    🎭 Rhetoric
+                </h3>
+
 
                 <p>
-                    Separate facts, assumptions, and opinions.
+                    Identify emotional and logical persuasion
+                    techniques.
                 </p>
 
+
             </div>
+
+
+
+
 
             <div class="feature-card">
 
-                <h3>⚖ Objective Analysis</h3>
+
+                <h3>
+                    🧠 Critical Thinking
+                </h3>
+
 
                 <p>
-                    AI-generated insights without political bias.
+                    Understand arguments beyond surface-level text.
                 </p>
 
+
             </div>
+
+
+
 
         </section>
 
-        <!-- ================= FOOTER ================= -->
+
+
+
+
+
+
+        <!-- FOOTER -->
+
 
         <footer>
 
+
             <p>
-                Built using Google's Gemini API • Designed for education and
-                media literacy
+
+                Built using Google's Gemini API • Designed for education
+                and media literacy
+
             </p>
+
 
         </footer>
 
+
+
+
     </main>
 
-    <script src="app.js"></script>
+
+
+
+<script src="./app.js"></script>
+
 
 </body>
+
 
 </html>

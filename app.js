@@ -1,375 +1,522 @@
+/* ==========================================================
+   Nuance
+   AI Critical Reading Assistant
 
-// =========================
-// Nuance - app.js
-// =========================
+   app.js
+========================================================== */
 
-// ---------- Elements ----------
+
+/* ===========================
+   ELEMENTS
+=========================== */
+
 
 const userInput = document.getElementById("userInput");
+
 const analyzeBtn = document.getElementById("analyzeBtn");
+
 const clearBtn = document.getElementById("clearBtn");
+
 const exampleBtn = document.getElementById("exampleBtn");
 
-const aiOutput = document.getElementById("aiOutput");
-const loadingState = document.getElementById("loadingState");
-const emptyState = document.getElementById("emptyState");
-
 const copyBtn = document.getElementById("copyBtn");
-const downloadBtn = document.getElementById("downloadBtn");
+
+const exportBtn = document.getElementById("exportBtn");
 
 const wordCounter = document.getElementById("wordCounter");
 
-// ======================================
-// Gemini API
-// ======================================
+const aiOutput = document.getElementById("aiOutput");
+
+
+
+/* ===========================
+   GEMINI API KEY
+=========================== */
+
 
 const API_KEY = "YOUR_API_KEY_HERE";
 
-const API_URL =
-`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
-// ======================================
-// Example Text
-// ======================================
 
-const exampleText = `Artificial intelligence will fundamentally reshape education.
 
-Supporters argue that AI tutors can personalize learning, improve accessibility, and reduce educational inequality.
 
-Critics, however, warn that AI could replace human interaction, encourage dependency, and reinforce existing biases if not carefully regulated.`;
+/* ===========================
+   WORD COUNTER
+=========================== */
 
-// ======================================
-// Prompt
-// ======================================
 
-function buildPrompt(text){
+userInput.addEventListener(
+    "input",
+    () => {
 
-return `You are Nuance, an AI specialized in media literacy and critical reading.
+
+        const words =
+            userInput.value
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean);
+
+
+        wordCounter.textContent =
+            `${words.length} Words`;
+
+
+    }
+);
+
+
+
+
+
+
+/* ===========================
+   EXAMPLE TEXT
+=========================== */
+
+
+exampleBtn.addEventListener(
+    "click",
+    () => {
+
+
+        userInput.value =
+        `
+        Social media platforms have changed how people consume news.
+        While they allow faster information sharing, they also create
+        challenges related to misinformation, political polarization,
+        and algorithmic bias.
+        `;
+
+
+        userInput.dispatchEvent(
+            new Event("input")
+        );
+
+
+    }
+);
+
+
+
+
+
+
+/* ===========================
+   CLEAR BUTTON
+=========================== */
+
+
+clearBtn.addEventListener(
+    "click",
+    () => {
+
+
+        userInput.value = "";
+
+        wordCounter.textContent =
+        "0 Words";
+
+
+        aiOutput.innerHTML =
+        `
+        <div class="empty-icon">
+            ✨
+        </div>
+
+        <h3>
+            Ready to Analyze
+        </h3>
+
+        <p>
+            Paste any article or speech above and let Nuance
+            uncover hidden rhetoric, persuasive techniques,
+            emotional framing, and potential bias.
+        </p>
+        `;
+
+
+    }
+);
+
+
+
+
+
+
+
+/* ===========================
+   ANALYSIS
+=========================== */
+
+
+analyzeBtn.addEventListener(
+    "click",
+    async () => {
+
+
+        const text =
+            userInput.value.trim();
+
+
+
+        if(!text){
+
+
+            alert(
+                "Please enter text to analyze first."
+            );
+
+
+            return;
+
+        }
+
+
+
+
+        showLoading();
+
+
+
+        analyzeBtn.disabled = true;
+
+
+
+
+        try{
+
+
+            const response =
+            await fetch(
+
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
+
+            {
+
+                method:"POST",
+
+
+                headers:{
+
+                    "Content-Type":
+                    "application/json"
+
+                },
+
+
+                body:JSON.stringify({
+
+                    contents:[
+
+                        {
+
+                            parts:[
+
+                                {
+
+text:
+
+`
+You are Nuance, an AI critical reading assistant.
 
 Analyze the following text.
 
-Return ONLY HTML.
+Provide a structured response using:
 
-Use this structure:
+<h3>Core Summary</h3>
+Explain the main argument briefly.
 
-<h2>📌 Core Summary</h2>
+<h3>Rhetorical Strategies</h3>
+Identify:
+- Emotional appeals
+- Logical reasoning
+- Persuasive techniques
 
-<p>Two concise sentences.</p>
+<h3>Underlying Bias or Subtext</h3>
+Identify:
+- Assumptions
+- Possible bias
+- Framing techniques
 
-<h2>🎭 Rhetorical Strategies</h2>
-
-<ul>
-<li>...</li>
-<li>...</li>
-<li>...</li>
-</ul>
-
-<h2>⚖ Bias & Subtext</h2>
-
-<ul>
-<li>...</li>
-<li>...</li>
-<li>...</li>
-</ul>
-
-<h2>🧠 Confidence</h2>
-
-<p>High / Medium / Low</p>
+<h3>Critical Reflection</h3>
+Give a short evaluation of the argument.
 
 Text:
 
-${text}`;
+${text}
+
+`
+
+                                }
+
+                            ]
+
+                        }
+
+                    ]
+
+                })
+
+            });
+
+
+            const data =
+            await response.json();
+
+
+
+            if(
+                !data.candidates ||
+                !data.candidates[0]
+            ){
+
+                throw new Error(
+                    "Invalid AI response"
+                );
+
+            }
+
+
+
+
+            let result =
+
+            data
+            .candidates[0]
+            .content
+            .parts[0]
+            .text;
+
+
+
+            displayResult(result);
+
+
+
+        }
+
+
+        catch(error){
+
+
+            console.error(error);
+
+
+
+            aiOutput.innerHTML =
+
+            `
+            <div class="empty-state">
+
+            <div class="empty-icon">
+            ⚠️
+            </div>
+
+
+            <h3>
+            Something went wrong
+            </h3>
+
+
+            <p>
+            Check your API key or connection
+            and try again.
+            </p>
+
+
+            </div>
+            `;
+
+
+        }
+
+
+
+        finally{
+
+
+            analyzeBtn.disabled =
+            false;
+
+
+        }
+
+
+    }
+
+);
+
+
+
+
+
+
+
+/* ===========================
+   DISPLAY RESULT
+=========================== */
+
+
+function displayResult(text){
+
+
+    aiOutput.className =
+    "output";
+
+
+    aiOutput.innerHTML =
+
+    text
+    .replace(
+        /\*\*(.*?)\*\*/g,
+        "<strong>$1</strong>"
+    )
+    .replace(
+        /\n/g,
+        "<br>"
+    );
+
 
 }
 
-// ======================================
-// Helpers
-// ======================================
+
+
+
+
+
+
+/* ===========================
+   LOADING
+=========================== */
+
 
 function showLoading(){
 
-loadingState.classList.remove("hidden");
-emptyState.classList.add("hidden");
-aiOutput.classList.add("hidden");
 
-analyzeBtn.disabled = true;
-analyzeBtn.textContent = "Analyzing...";
+    aiOutput.innerHTML =
 
-}
 
-function hideLoading(){
+    `
+    <div class="loading">
 
-loadingState.classList.add("hidden");
 
-analyzeBtn.disabled = false;
-analyzeBtn.textContent = "Analyze Subtext";
+        <div class="spinner"></div>
 
-}
 
-function showOutput(html){
+        <p>
+        Analyzing rhetoric, bias, and hidden meaning...
+        </p>
 
-emptyState.classList.add("hidden");
 
-loadingState.classList.add("hidden");
+    </div>
+    `;
 
-aiOutput.classList.remove("hidden");
-
-aiOutput.innerHTML = html;
 
 }
 
-function showError(message){
 
-showOutput(`<p style="color:#ff6b6b;">❌ ${message}</p>`);
 
-}
 
-function updateWordCounter(){
 
-const words =
-userInput.value
-.trim()
-.split(/\s+/)
-.filter(Boolean)
-.length;
 
-wordCounter.textContent =
-`${words} Word${words===1?"":"s"}`;
 
-}
+/* ===========================
+   COPY OUTPUT
+=========================== */
 
-function autoResize(){
 
-userInput.style.height="auto";
+copyBtn.addEventListener(
 
-userInput.style.height=
-userInput.scrollHeight+"px";
-
-}
-
-// ======================================
-// Analyze
-// ======================================
-
-async function analyzeText(){
-
-const text=userInput.value.trim();
-
-if(!text){
-
-alert("Paste some text first.");
-
-return;
-
-}
-
-showLoading();
-
-try{
-
-const response=await fetch(API_URL,{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-
-contents:[
-
-{
-
-parts:[
-
-{
-
-text:buildPrompt(text)
-
-}
-
-]
-
-}
-
-]
-
-})
-
-});
-
-if(!response.ok){
-
-throw new Error(
-`Request failed (${response.status})`
-);
-
-}
-
-const data=await response.json();
-
-const output=
-data?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-if(!output){
-
-throw new Error(
-"No response received from Gemini."
-);
-
-}
-
-showOutput(output);
-
-}
-
-catch(error){
-
-console.error(error);
-
-showError(error.message);
-
-}
-
-finally{
-
-hideLoading();
-
-}
-
-}
-
-// ======================================
-// Buttons
-// ======================================
-
-analyzeBtn.addEventListener(
 "click",
-analyzeText
+
+async()=>{
+
+
+    const text =
+    aiOutput.innerText;
+
+
+
+    await navigator.clipboard.writeText(
+        text
+    );
+
+
+
+    copyBtn.textContent =
+    "✓ Copied";
+
+
+
+    setTimeout(()=>{
+
+        copyBtn.textContent =
+        "📋 Copy";
+
+    },2000);
+
+
+
+}
+
 );
 
-// ---------- Clear ----------
 
-clearBtn.addEventListener("click",()=>{
 
-userInput.value="";
 
-aiOutput.innerHTML="";
 
-emptyState.classList.remove("hidden");
 
-aiOutput.classList.add("hidden");
 
-updateWordCounter();
 
-autoResize();
+/* ===========================
+   EXPORT TXT
+=========================== */
 
-});
 
-// ---------- Example ----------
+exportBtn.addEventListener(
 
-exampleBtn.addEventListener("click",()=>{
+"click",
 
-userInput.value=exampleText;
+()=>{
 
-updateWordCounter();
 
-autoResize();
+    const content =
+    aiOutput.innerText;
 
-});
 
-// ---------- Copy ----------
 
-copyBtn.addEventListener("click",async()=>{
+    const file =
+    new Blob(
 
-const text=aiOutput.innerText;
+        [content],
 
-if(!text)return;
+        {
+            type:"text/plain"
+        }
 
-try{
+    );
 
-await navigator.clipboard.writeText(text);
 
-copyBtn.textContent="✅ Copied";
 
-setTimeout(()=>{
+    const link =
+    document.createElement("a");
 
-copyBtn.textContent="📋 Copy";
 
-},2000);
+
+    link.href =
+    URL.createObjectURL(file);
+
+
+
+    link.download =
+    "Nuance_Analysis.txt";
+
+
+
+    link.click();
+
+
 
 }
 
-catch{
-
-alert("Couldn't copy.");
-
-}
-
-});
-
-// ---------- Download ----------
-
-downloadBtn.addEventListener("click",()=>{
-
-const text=aiOutput.innerText;
-
-if(!text)return;
-
-const blob=new Blob(
-[text],
-{type:"text/plain"}
 );
-
-const url=
-URL.createObjectURL(blob);
-
-const a=document.createElement("a");
-
-a.href=url;
-
-a.download="Nuance Analysis.txt";
-
-a.click();
-
-URL.revokeObjectURL(url);
-
-});
-
-// ======================================
-// Keyboard Shortcuts
-// ======================================
-
-userInput.addEventListener(
-"keydown",
-e=>{
-
-if(e.ctrlKey && e.key==="Enter"){
-
-analyzeText();
-
-}
-
-}
-);
-
-// ======================================
-// Input Events
-// ======================================
-
-userInput.addEventListener("input",()=>{
-
-updateWordCounter();
-
-autoResize();
-
-});
-
-// ======================================
-// Startup
-// ======================================
-
-updateWordCounter();
-
-autoResize();
