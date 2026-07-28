@@ -433,6 +433,8 @@ body{
 
 
 
+    background-clip:text;
+
     -webkit-background-clip:text;
 
     -webkit-text-fill-color:transparent;
@@ -578,11 +580,7 @@ body{
 
     font-size:1.3rem;
 
-        background-clip: text;
-        -webkit-background-clip: text;
-        color: transparent;
-        -webkit-text-fill-color: transparent;
-
+}
 
 
 #wordCounter{
